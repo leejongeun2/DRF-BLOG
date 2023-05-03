@@ -1,1 +1,1 @@
-blog start
+blog start!
