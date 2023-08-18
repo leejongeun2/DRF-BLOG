@@ -127,12 +127,12 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # DRF
-# 로그인한 유저에 대해서는 장고 모델에 대해 crud모두 가능, 로그인 하지 않은 유저는 리드만 가능
+# 로그인한 유저에 대해서는 장고 모델에 대해 crud모두 가능, 로그인 하지 않은 유저는 리드만 가능(로그인한 경우, 유저 등록 노출)
 # 아래 주석이 없으면 모든 유저에게 crud가 허용 => allowany
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
-}
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+#     ]
+# }

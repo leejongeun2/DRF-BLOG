@@ -13,16 +13,40 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+# from django.contrib import admin
+# from django.urls import path, include
 
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     # DRF
+#     path('api-auth/', include('rest_framework.urls')),
+#     # path('blog/', include('blog.urls')),
+#     path('api/', include('api.urls')),
+# ]
+from django.urls import path, include
+from django.contrib import admin
+# Serializers define the API representation.
+# class UserSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['url', 'username', 'email', 'is_staff']
+
+# # ViewSets define the view behavior.
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+
+# Routers provide an easy way of automatically determining the URL conf.
+# router = routers.DefaultRouter()
+# router.register(r'users', UserViewSet)
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # DRF
-    path('api-auth/', include('rest_framework.urls')),
     # path('blog/', include('blog.urls')),
     path('api/', include('api.urls')),
+    # path('', include(router.urls)),
+    # path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))# rest_Framework.urls 주석처리하면 로그인 버튼이 사라짐
 ]
 
-
-# rest_Framework.urls 주석처리하면 로그인 버튼이 사라짐
