@@ -1,6 +1,6 @@
 from django.db import models
 
-# post와 category는 n:1관계
+# post와 category는 n:1관계, # post와 tag는 n:n관계
 class Post(models.Model):
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, blank=True, null=True)
     tags = models.ManyToManyField('Tag', blank=True)
@@ -26,7 +26,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-# post와 tag는 n:n관계
+
 class Tag(models.Model):
     name = models.CharField(max_length=50)
 
