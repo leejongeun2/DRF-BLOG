@@ -2,7 +2,7 @@ from django.db import models
 
 # post와 category는 n:1관계, # post와 tag는 n:n관계
 class Post(models.Model):
-    category = models.ForeignKey('Category', on_delete=models.SET_NULL, blank=True, null=True)
+    category = models.ForeignKey('Category', on_delete=models.SET_NULL, blank=True, null=True) # blank=true면 필수 아님
     tags = models.ManyToManyField('Tag', blank=True)
     title = models.CharField('TITLE', max_length=50)
     description = models.CharField('DESCRIPTION', max_length=100, blank=True, help_text='simple one-line text.')
