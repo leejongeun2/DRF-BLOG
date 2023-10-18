@@ -3,13 +3,11 @@
 # from http.client import responses
 from collections import OrderedDict
 from api.serializers import CommentSerializer, PostListSerializer, PostRetrieveSerializer, PostSerializerDetail, UserSerializer, CategorySerializer, TagSerializer, CateTagSerializer
-from api.utils import obj_to_comment, obj_to_post, prev_next_post
 from blog.models import Category, Comment, Post, Tag    
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.viewsets import  ModelViewSet
 
 
 # class UserViewSet(viewsets.ModelViewSet): # modelviewset을 상속받았기 때문에 user에 대한 crud가능
@@ -40,9 +38,9 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,
 # 클래스 내 코드는 위 클래스와 동일하지만 상속받는 뷰가 다르므로 로직 다름
 # postviewset이 하나로 코딩했었으나, 이제 2개로 나누어 로직 따로 코딩됨
 
-# class CommentCreateAPIView(CreateAPIView):
-#     queryset = Comment.objects.all()
-#     serializer_class = CommentSerializer
+class CommentCreateAPIView(CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
 # patch 메서드
 # class PostLikeAPIView(UpdateAPIView):
@@ -65,7 +63,17 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,
 #         return Response(data['like'])
     
 
+# patch 메서드
+class PostLikeAPIView(GenericAPIView):
+    queryset = Post.objects.all()
+    # serializer_class = PostLikeSerializer # 5개 필드
 
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.like += 1
+        instance.save()
+       
+        return Response(instance.like)
     
 
     
@@ -97,20 +105,20 @@ class PostPageNumberPagination(PageNumberPagination):
         ]))
 
 
-# class PostListAPIView(ListAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostListSerializer
-#     pagination_class = PostPageNumberPagination
+class PostListAPIView(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostListSerializer
+    pagination_class = PostPageNumberPagination
 
-#     def get_serializer_context(self):
-#         """
-#         Extra context provided to the serializer class.
-#         """
-#         return {
-#             'request': None,
-#             'format': self.format_kwarg,
-#             'view': self
-#         }
+    def get_serializer_context(self):
+        """
+        Extra context provided to the serializer class.
+        """
+        return {
+            'request': None,
+            'format': self.format_kwarg,
+            'view': self
+        }
 
 
 def get_prev_next(instance):
@@ -125,53 +133,41 @@ def get_prev_next(instance):
         next_ = None
     return prev, next_
 
-# class PostRetrieveAPIView(RetrieveAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializerDetail # 모든필드
-
-#     def retrieve(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         prevInstance, nextInstance = get_prev_next(instance)
-#         commentList = instance.comment_set.all()
-
-
-#         data = {
-#             'post': instance,
-#             'prevPost': prevInstance,
-#             'nextPost': nextInstance,
-#             'commentList': commentList,
-#         }
-#         serializer = self.get_serializer(instance=data)
-#         return Response(serializer.data)
-    
-#     def get_serializer_context(self):
-#         """
-#         Extra context provided to the serializer class.
-#         """
-#         return {
-#             'request': None,
-#             'format': self.format_kwarg,
-#             'view': self
-#         }
-
-# # patch 메서드
-# class PostLikeAPIView(GenericAPIView):
-#     queryset = Post.objects.all()
-#     # serializer_class = PostLikeSerializer # 5개 필드
-
-#     def get(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         instance.like += 1
-#         instance.save()
-       
-#         return Response(instance.like)
-    
-
-class PostViewSet(ModelViewSet):
+class PostRetrieveAPIView(RetrieveAPIView):
     queryset = Post.objects.all()
-    serializer_class = PostListSerializer
-    pagination_class = PostPageNumberPagination
+    serializer_class = PostSerializerDetail # 모든필드
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        prevInstance, nextInstance = get_prev_next(instance)
+        commentList = instance.comment_set.all()
+
+        # postDict = 
+        # prevDic = 
+        # nextDic = 
+        # commentDic = 
+
+
+        # datadic = {
+        #     'post': postDict,
+        #     'prevPost': prevDic,
+        #     'nextPost': nextDic,
+        #     'commentList': commentDic,
+
+        # } # 딕셔너리까지 개발자가 만들고 리턴을 딕셔너리로함
+
+        # return Response(datadic)
+
+
+        data = {
+            'post': instance,
+            'prevPost': prevInstance,
+            'nextPost': nextInstance,
+            'commentList': commentList,
+        }
+        serializer = self.get_serializer(instance=data)
+        return Response(serializer.data)
+    
     def get_serializer_context(self):
         """
         Extra context provided to the serializer class.
@@ -181,38 +177,3 @@ class PostViewSet(ModelViewSet):
             'format': self.format_kwarg,
             'view': self
         }
-    def get_queryset(self):
-        return Post.objects.all().select_related('category').prefetch_related('tags', 'comment_set')
-    
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        # prevInstance, nextInstance = get_prev_next(instance)
-        commentList = instance.comment_set.all()
-
-        postDict = obj_to_post(instance)
-        prevDict, nextDict = prev_next_post(instance)
-        commentDict = [obj_to_comment(c) for c in commentList]
-
-        dataDict = {
-            'post': postDict,
-            'prevPost': prevDict,
-            'nextPost': nextDict,
-            'commentList': commentDict,
-        }
-
-        return Response(dataDict)
-
-    
-    def like(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.like += 1
-        instance.save()
-       
-        return Response(instance.like)
-    
-
-
-class CommentViewSet(ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
