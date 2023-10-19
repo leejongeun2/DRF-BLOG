@@ -8,7 +8,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'username', 'email', 'is_staff']
 
 class PostListSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='category.name')
+    # ModelSerializer의 서브클래스로, Post 모델의 객체를 JSON과 같은 형식으로 변환하는 데 사용
+    category = serializers.CharField(source='category.name') # : Post 모델 내의 category 필드를 참조하며, category 객체의 name 속성을 직렬화할 것을 지정
     class Meta:
         model = Post
         # fields = '__all__' # 클라이언트에게 보내줄 필드

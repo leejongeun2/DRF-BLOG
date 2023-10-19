@@ -27,8 +27,11 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
 
 # class PostListAPIView(ListAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostListSerializer
+#     queryset = Post.objects.all() # post 모든 객체 가져옴
+#     serializer_class = PostListSerializer # 쿼리셋을 직렬화하는 데 사용할 시리얼라이저 클래스를 지정
+# Post 모델의 객체 목록을 반환하는 API 엔드포인트를 만드는 데 사용
+# RetrieveAPIView는 Django REST framework에서 제공하는 제네릭 뷰의 한 종류로, 단일 객체의 상세 정보를 가져오는 (즉, "retrieve" 작업) 엔드포인트를 구현하기 위해 설계됨
+#  이 뷰는 특정 객체의 상세 정보를 반환할 때 사용
 
 
 
